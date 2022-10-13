@@ -1,0 +1,25 @@
+---
+  - name: Install OpenJDK
+    apt:
+      name: openjdk-11-jre-headless
+      state: present
+      update_cache: true
+
+  - name: download tomcat server packages
+    get_url:
+      url: https://archive.apache.org/dist/tomcat/tomcat-9/v{{tomcat9_version}}/bin/apache-tomcat-{{tomcat9_version}}.tar.gz
+      dest: /usr/local
+
+  - name: extract tomcat packages
+    unarchive:
+      src: /usr/local/apache-tomcat-{{tomcat9_version}}.tar.gz
+      dest: /usr/local
+      remote_src: yes
+
+  - name: add fusebox war
+    synchronize:
+      mode: push
+      src: /tmp/hello-1.0.war
+      dest: /usr/local/apache-tomcat-{{tomcat9_version}}/webapps
+    notify:
+    - startup tomcat

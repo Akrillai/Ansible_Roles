@@ -1,0 +1,3 @@
+---
+# vars file for appdeployment
+tomcat9_version: "9.0.44"

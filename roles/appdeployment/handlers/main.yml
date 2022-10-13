@@ -1,0 +1,4 @@
+---
+# handlers file for webserver
+- name: startup tomcat
+  shell: nohup /usr/local/apache-tomcat-{{tomcat9_version}}/bin/startup.sh

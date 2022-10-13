@@ -1,0 +1,40 @@
+---
+- name: Install needed packages
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: true
+  with_items:
+    - maven
+    - git
+
+- name: Git Clone boxfuse
+  git:
+    repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+    dest: /tmp/boxfuse-hello
+    clone: true
+    update: true
+    force: true
+
+- name: remove progonal logo
+  file:
+    path: /tmp/boxfuse-hello/src/main/webapp/boxfuse.png
+    state: absent
+
+- name: download Docker Logo png
+  get_url:
+    url: "{{png_url}}"
+    dest: /tmp/boxfuse-hello/src/main/webapp/boxfuse.png
+
+- name: Maven when cloned ok
+  shell:
+    chdir: /tmp/boxfuse-hello
+    cmd: mvn package
+  register: build_status
+
+- name: Fetch the artifact file to the local machine
+  synchronize:
+    mode: pull
+    src: /tmp/boxfuse-hello/target/hello-1.0.war
+    dest: /tmp/
+  when: build_status is succeeded
